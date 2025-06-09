@@ -55,6 +55,10 @@ public class User implements UserDetails {
     @JsonManagedReference("user-incidencias")
     private Set<Incidencia> incidencias = new HashSet<>();
 
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @JsonManagedReference("user-reservas")
+    private Set<Reserva> reservas = new HashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
