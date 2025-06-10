@@ -35,12 +35,16 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .headers(headers -> headers.frameOptions().disable()) // Permitir frames para WebSocket
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/incidencias/download/**").permitAll()
                 .requestMatchers("/api/documentos/download/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/uploads/**").permitAll()
+                .requestMatchers("/ws/**").permitAll() // Permitir conexiones WebSocket
+                .requestMatchers("/api/chat/**").permitAll() // Permitir todas las rutas del chat
+                .requestMatchers("/sockjs-node/**").permitAll() // Para SockJS
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -55,14 +59,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Content-Disposition"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false); // Cambiar a false para WebSocket
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/ws/**", configuration); // Específico para WebSocket
         return source;
     }
 

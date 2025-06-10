@@ -51,6 +51,10 @@ public class Community {
     @JsonManagedReference("community-zonas")
     private Set<ZonaComun> zonasComunes = new HashSet<>();
 
+    @OneToMany(mappedBy = "community", fetch = FetchType.LAZY)
+    @JsonManagedReference("community-chat")
+    private Set<ChatMessage> chatMessages = new HashSet<>();
+
     public String getCommunityCode() {
         return this.communityCode;
     }

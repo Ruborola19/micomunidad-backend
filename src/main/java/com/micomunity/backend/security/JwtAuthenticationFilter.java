@@ -35,6 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/uploads",
         "/api/documentos/download",
         "/api/incidencias/download",
+        "/ws", // Todas las rutas WebSocket
+        "/api/chat", // Todas las rutas del chat
         "/error"
     );
 
@@ -71,6 +73,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // BYPASS DIRECTO: Permitir acceso a /api/uploads/** (por compatibilidad)
         if (path.startsWith("/api/uploads/")) {
             log.info("BYPASS DIRECTO: Permitiendo acceso a api/uploads para: {}", path);
+            return true;
+        }
+
+        // BYPASS DIRECTO: Permitir WebSocket chat
+        if (path.startsWith("/ws/")) {
+            log.info("BYPASS DIRECTO: Permitiendo WebSocket para: {}", path);
+            return true;
+        }
+
+        // BYPASS DIRECTO: Permitir todas las rutas del chat
+        if (path.startsWith("/api/chat/")) {
+            log.info("BYPASS DIRECTO: Permitiendo chat API para: {}", path);
             return true;
         }
 
